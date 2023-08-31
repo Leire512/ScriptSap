@@ -1,0 +1,60 @@
+Private Sub test()
+Dim application
+Dim Connection
+'se debe agrega referencia C:\Program Files (x86)\SAP\FrontEnd\SAPgui\sapfewse.ocx
+'Dim Zwindow As SAPFEWSELib.guimodalwindow
+ActiveSheet.Select
+Dim DataObj As MSForms.DataObject
+Set DataObj = New MSForms.DataObject
+
+If Not IsObject(application) Then
+   Set SapGuiAuto = GetObject("SAPGUI")
+   Set application = SapGuiAuto.GetScriptingEngine
+End If
+If Not IsObject(Connection) Then
+   Set Connection = application.Children(0)
+End If
+If Not IsObject(session) Then
+   Set session = Connection.Children(0)
+End If
+If IsObject(WScript) Then
+   WScript.ConnectObject session, "on"
+   WScript.ConnectObject application, "on"
+End If
+
+'----------Inicio Variables------------
+Dim fila As Integer
+fila = 5
+'----------Fin Variables------------
+
+Do While Cells(fila, 1) <> ""
+
+'ingresa a la transaccion deseada
+session.findById("wnd[0]/tbar[0]/okcd").Text = "/nMM03"
+session.findById("wnd[0]").sendVKey 0
+'Dejar material de forma variable según planilla excel
+session.findById("wnd[0]/usr/ctxtRMMG1-MATNR").Text = Cells(fila, 1)
+
+session.findById("wnd[0]").sendVKey 0
+session.findById("wnd[1]/usr/tblSAPLMGMMTC_VIEW").getAbsoluteRow(0).Selected = True
+session.findById("wnd[1]/tbar[0]/btn[0]").press
+
+'Para datos base 1, no es necesario indicar el centro
+session.findById("wnd[1]/usr/ctxtRMMG1-WERKS").Text = ""
+session.findById("wnd[1]").sendVKey 0
+
+session.findById("wnd[0]/titl/shellcont/shell").pressContextButton "%GOS_TOOLBOX"
+session.findById("wnd[0]/titl/shellcont/shell").selectContextMenuItem "%GOS_PCATTA_CREA"
+session.findById("wnd[1]/usr/ctxtDY_PATH").SetFocus
+
+'Dejar ruta del archivo variable segun planilla excel.
+session.findById("wnd[1]/usr/ctxtDY_PATH").Text = Cells(fila, 2)
+session.findById("wnd[1]/usr/ctxtDY_PATH").SetFocus
+session.findById("wnd[1]/usr/ctxtDY_PATH").caretPosition = 49
+session.findById("wnd[1]").sendVKey 0
+
+fila = fila + 1
+Loop
+
+MsgBox ("Ended Process")
+End Sub
