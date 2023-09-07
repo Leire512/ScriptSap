@@ -1,6 +1,7 @@
 Private Sub test()
 Dim application
 Dim Connection
+'se debe agregar Microsoft Forms 2.0 Object Library
 'se debe agrega referencia C:\Program Files (x86)\SAP\FrontEnd\SAPgui\sapfewse.ocx
 'Dim Zwindow As SAPFEWSELib.guimodalwindow
 ActiveSheet.Select
